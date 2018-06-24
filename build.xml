@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="XChart" default="jar" basedir=".">
+	<description>
+		Unofficial Ant builder for compatibility to:
+			https://github.com/xor-freenet/plugin-WebOfTrust
+		Based on:
+			https://github.com/xor-freenet/db4o-7.4/blob/v34/build.xml
+	</description>
+
+	<property name="src" location="xchart/src"/>
+	<property name="build" location="build"/>
+	<property name="build-test" location="build-test"/>
+	<property name="jarfile" location="xchart.jar"/>
+	<!-- You can override this by passing the properties to the Ant 
+         command! -->
+	<property name="javac.source.version" value="1.7"/>
+	<property name="javac.target.version" value="1.7"/>
+	
+	<presetdef name="javac">
+		<!--
+		includeAntRuntime = "Whether to include the Ant run-time libraries in the classpath;
+		defaults to yes, unless build.sysclasspath is set. It is usually best to set this
+		to false so the script's behavior is not sensitive to the environment in which it
+		is run."
+		Source: https://ant.apache.org/manual/Tasks/javac.html
+		
+		I don't know why anyone would want the build system on the classpath of his project,
+		this might be an Ant misfeature.
+		
+		If we don't set this to false, we will get "warning: 'includeantruntime' was not
+		set defaulting to build.sysclasspath=last; set to false for repeatable builds".
+		TODO: Remove when Ant fixes this.
+		-->
+		<javac includeantruntime="false"/>
+	</presetdef>
+
+	<target name="mkdir">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build-test}"/>
+	</target>
+
+	<target name="compile" depends="mkdir">
+		<javac srcdir="${src}/main" destdir="${build}" debug="on" optimize="on" source="${javac.source.version}" target="${javac.target.version}"/>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar jarfile="${jarfile}" basedir="${build}"/>
+	</target>
+
+<!--  There currently are no tests.
+	<target name="compile-tests" depends="jar">
+		<javac srcdir="${src}/test" destdir="${build}" debug="on" optimize="on" source="${javac.source.version}" target="${javac.target.version}">
+			<classpath>
+				<pathelement location="${jarfile}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<assertions>
+		<enable/>
+	</assertions>
+-->
+	<target name="clean">
+		<delete file="${jarfile}"/>
+		<delete dir="${build}"/>
+		<delete dir="${build-tests}"/>
+	</target>
+</project>
